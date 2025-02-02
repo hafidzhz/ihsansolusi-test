@@ -1,0 +1,134 @@
+definitions:
+  controller.ErrorResponse:
+    properties:
+      msg:
+        type: string
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      identity_number:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - identity_number
+    - name
+    - phone_number
+    type: object
+  dto.DepositRequest:
+    properties:
+      account_number:
+        type: string
+      amount:
+        type: number
+    required:
+    - account_number
+    - amount
+    type: object
+  dto.User:
+    properties:
+      balance:
+        type: number
+      id:
+        type: integer
+      idenity_number:
+        type: string
+      name:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  dto.WithdrawRequest:
+    properties:
+      account_number:
+        type: string
+      amount:
+        type: number
+    required:
+    - account_number
+    - amount
+    type: object
+info:
+  contact: {}
+paths:
+  /daftar:
+    post:
+      consumes:
+      - application/json
+      description: Register a user.
+      parameters:
+      - description: Create new user
+        in: body
+        name: createUserRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account Number
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+      summary: Register a user
+      tags:
+      - User
+  /tabung:
+    post:
+      consumes:
+      - application/json
+      description: Withdraw money to user account.
+      parameters:
+      - description: Withdraw money to user account
+        in: body
+        name: withdrawRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.WithdrawRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/dto.User'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+      summary: Withdraw money to user account
+      tags:
+      - User
+swagger: "2.0"
