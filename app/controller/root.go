@@ -1,9 +1,11 @@
 package controller
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/hrshadhin/fiber-go-boilerplate/platform/logger"
 	"strconv"
+
+	"github.com/hafidzhz/ihsansolusi-test/platform/logger"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 var logr = logger.GetLogger()

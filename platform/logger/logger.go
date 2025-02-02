@@ -3,7 +3,7 @@ package logger
 import (
 	"os"
 
-	"github.com/hrshadhin/fiber-go-boilerplate/pkg/config"
+	"github.com/hafidzhz/ihsansolusi-test/pkg/config"
 
 	"github.com/sirupsen/logrus"
 )

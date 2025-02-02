@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/hrshadhin/fiber-go-boilerplate/app/entity"
-	"github.com/hrshadhin/fiber-go-boilerplate/pkg/config"
+	"github.com/hafidzhz/ihsansolusi-test/app/entity"
+	"github.com/hafidzhz/ihsansolusi-test/pkg/config"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

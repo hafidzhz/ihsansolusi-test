@@ -1,7 +1,7 @@
 package entity
 
 type User struct {
-	ID             int     `gorm:"primary_key;type:serial"`
+	ID             int64   `gorm:"primary_key;type:bigserial"`
 	Name           string  `gorm:"type:varchar(100)"`
 	IdentityNumber string  `gorm:"unique;type:varchar(16)"`
 	PhoneNumber    string  `gorm:"unique;type:varchar(15)"`
@@ -11,4 +11,17 @@ type User struct {
 
 func NewUser() *User {
 	return &User{}
+}
+
+func (User) GetFieldFromConstraint(constraintName string) string {
+	constraintToField := map[string]string{
+		"uni_users_identity_number": "identity_number",
+		"uni_users_phone_number":    "phone_number",
+		"uni_users_account_number":  "account_number",
+	}
+
+	if field, exists := constraintToField[constraintName]; exists {
+		return field
+	}
+	return "Unknown"
 }

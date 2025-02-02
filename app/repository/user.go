@@ -3,13 +3,13 @@ package repository
 import (
 	"errors"
 	"fmt"
-	"regexp"
 
-	"github.com/hrshadhin/fiber-go-boilerplate/app/dto"
-	"github.com/hrshadhin/fiber-go-boilerplate/app/entity"
-	"github.com/hrshadhin/fiber-go-boilerplate/platform/logger"
-	"github.com/hrshadhin/fiber-go-boilerplate/shared"
-	"github.com/lib/pq"
+	"github.com/hafidzhz/ihsansolusi-test/app/dto"
+	"github.com/hafidzhz/ihsansolusi-test/app/entity"
+	"github.com/hafidzhz/ihsansolusi-test/platform/logger"
+	"github.com/hafidzhz/ihsansolusi-test/shared"
+
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
@@ -56,33 +56,21 @@ func (repo *UserRepositoryImpl) CreateUser(request *dto.CreateUserRequest) (*ent
 
 	if err != nil {
 		tx.Rollback()
-		var pqErr *pq.Error
-
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
-			re := regexp.MustCompile(`\((.*?)\)`)
-			matches := re.FindStringSubmatch(pqErr.Message)
-
-			if len(matches) > 1 {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == "23505" {
+				field := user.GetFieldFromConstraint(pgErr.ConstraintName)
 				logger.GetLogger().Warnf(
 					"[CreateUser-03] Unique constraint violation detected. Duplicate entry for field: %s. Value: %s.",
-					matches[1],
-					getFieldValue(user, matches[1]),
+					field,
+					getFieldValue(user, field),
 				)
-				return nil, fmt.Errorf("duplicate entry for field: %s", matches[1])
+				return nil, fmt.Errorf("duplicate entry for field: %s", field)
 			}
-
-			logger.GetLogger().Errorf(
-				"[CreateUser-04] Unique constraint violation. Message: %s. User Info: Name=%s, IdentityNumber=%s, PhoneNumber=%s",
-				pqErr.Message,
-				request.Name,
-				request.IdentityNumber,
-				request.PhoneNumber,
-			)
-			return nil, fmt.Errorf("unique constraint violation: %v", pqErr.Message)
 		}
 
 		logger.GetLogger().Errorf(
-			"[CreateUser-05] Error creating user: %s. User Info: Name=%s, IdentityNumber=%s, PhoneNumber=%s",
+			"[CreateUser-04] Error creating user: %s. User Info: Name=%s, IdentityNumber=%s, PhoneNumber=%s",
 			err,
 			request.Name,
 			request.IdentityNumber,
@@ -94,7 +82,7 @@ func (repo *UserRepositoryImpl) CreateUser(request *dto.CreateUserRequest) (*ent
 	err = tx.Commit().Error
 
 	if err != nil {
-		logger.GetLogger().Errorf("[CreateUser-03] error create user: %s. User Info: Name=%s, IdentityNumber=%s, PhoneNumber=%s",
+		logger.GetLogger().Errorf("[CreateUser-05] error create user: %s. User Info: Name=%s, IdentityNumber=%s, PhoneNumber=%s",
 			err,
 			request.Name,
 			request.IdentityNumber,
@@ -105,7 +93,7 @@ func (repo *UserRepositoryImpl) CreateUser(request *dto.CreateUserRequest) (*ent
 	return &user, nil
 }
 
-func (repo *UserRepositoryImpl) DepositToUserAccount(request *dto.DepositRequest) (*entity.User, error) {
+func (repo *UserRepositoryImpl) DepositToUserAccount(request *dto.DepositRequest) (user *entity.User, err error) {
 	tx := repo.db.Begin()
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -127,8 +115,7 @@ func (repo *UserRepositoryImpl) DepositToUserAccount(request *dto.DepositRequest
 		return nil, fmt.Errorf("user not found with account number: %s", request.AccountNumber)
 	}
 
-	var user entity.User
-	err := tx.Where("account_number = ?", request.AccountNumber).First(&user).Error
+	err = tx.Where("account_number = ?", request.AccountNumber).First(&user).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -140,7 +127,7 @@ func (repo *UserRepositoryImpl) DepositToUserAccount(request *dto.DepositRequest
 		return nil, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func (repo *UserRepositoryImpl) WithdrawFromUserAccount(request *dto.DepositRequest) (*entity.User, error) {
@@ -155,13 +142,23 @@ func (repo *UserRepositoryImpl) WithdrawFromUserAccount(request *dto.DepositRequ
 
 	if result.Error != nil {
 		tx.Rollback()
-		logger.GetLogger().Errorf("[WithdrawFromUserAccount-01] error updating balance for account number: %s", request.AccountNumber)
+		var pgErr *pgconn.PgError
+		if errors.As(result.Error, &pgErr) {
+			if pgErr.Code == "23514" {
+				logger.GetLogger().Warnf(
+					"[WithdrawFromUserAccount-01] check constraint violation detected. Below zero data for field: balance. account number: %s",
+					request.AccountNumber,
+				)
+				return nil, fmt.Errorf("below zero data for field: balance")
+			}
+		}
+		logger.GetLogger().Errorf("[WithdrawFromUserAccount-02] error updating balance for account number: %s", request.AccountNumber)
 		return nil, result.Error
 	}
 
 	if result.RowsAffected == 0 {
 		tx.Rollback()
-		logger.GetLogger().Warnf("[WithdrawFromUserAccount-02] user not found. account number: %s", request.AccountNumber)
+		logger.GetLogger().Warnf("[WithdrawFromUserAccount-03] user not found. account number: %s", request.AccountNumber)
 		return nil, fmt.Errorf("user not found with account number: %s", request.AccountNumber)
 	}
 
@@ -174,7 +171,7 @@ func (repo *UserRepositoryImpl) WithdrawFromUserAccount(request *dto.DepositRequ
 
 	err = tx.Commit().Error
 	if err != nil {
-		logger.GetLogger().Errorf("[WithdrawFromUserAccount-03] error updating balance for account number: %s", request.AccountNumber)
+		logger.GetLogger().Errorf("[WithdrawFromUserAccount-04] error updating balance for account number: %s", request.AccountNumber)
 		return nil, err
 	}
 

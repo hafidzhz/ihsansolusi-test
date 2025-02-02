@@ -93,7 +93,84 @@ paths:
       summary: Register a user
       tags:
       - User
+  /saldo/{accountNumber}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves user balance based on account number.
+      parameters:
+      - description: Account number to fetch user balance
+        in: path
+        name: accountNumber
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Balance
+          schema:
+            additionalProperties:
+              type: number
+            type: object
+        "400":
+          description: Error response with corresponding status
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "401":
+          description: Error response with corresponding status
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "403":
+          description: Error response with corresponding status
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "500":
+          description: Error response with corresponding status
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+      summary: Get user balance
+      tags:
+      - User
   /tabung:
+    post:
+      consumes:
+      - application/json
+      description: Deposit money to user account.
+      parameters:
+      - description: Deposit money to user account
+        in: body
+        name: depositRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepositRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/dto.User'
+        "400":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "401":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "403":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+        "500":
+          description: Error
+          schema:
+            $ref: '#/definitions/controller.ErrorResponse'
+      summary: Deposit money to user account
+      tags:
+      - User
+  /tarik:
     post:
       consumes:
       - application/json

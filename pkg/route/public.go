@@ -1,8 +1,9 @@
 package route
 
 import (
+	"github.com/hafidzhz/ihsansolusi-test/app/controller"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/hrshadhin/fiber-go-boilerplate/app/controller"
 )
 
 func PublicRoutes(
@@ -13,5 +14,6 @@ func PublicRoutes(
 
 	route.Post("/daftar", userController.RegisterUser)
 	route.Post("/tabung", userController.Deposit)
-	// route.Post("/tarik", userController.With)
+	route.Post("/tarik", userController.Withdraw)
+	route.Get("/saldo/:accountNumber", userController.GetUser)
 }

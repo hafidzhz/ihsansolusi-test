@@ -85,7 +85,124 @@ var doc = `{
                 }
             }
         },
+        "/saldo/{accountNumber}": {
+            "get": {
+                "description": "Retrieves user balance based on account number.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user balance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Account number to fetch user balance",
+                        "name": "accountNumber",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Balance",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error response with corresponding status",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Error response with corresponding status",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Error response with corresponding status",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Error response with corresponding status",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tabung": {
+            "post": {
+                "description": "Deposit money to user account.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Deposit money to user account",
+                "parameters": [
+                    {
+                        "description": "Deposit money to user account",
+                        "name": "depositRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DepositRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "$ref": "#/definitions/dto.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "#/definitions/controller.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tarik": {
             "post": {
                 "description": "Withdraw money to user account.",
                 "consumes": [

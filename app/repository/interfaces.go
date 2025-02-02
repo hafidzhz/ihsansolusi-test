@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/hrshadhin/fiber-go-boilerplate/app/dto"
-	"github.com/hrshadhin/fiber-go-boilerplate/app/entity"
+	"github.com/hafidzhz/ihsansolusi-test/app/dto"
+	"github.com/hafidzhz/ihsansolusi-test/app/entity"
 )
 
 type UserRepository interface {

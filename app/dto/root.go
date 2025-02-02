@@ -1,9 +1,9 @@
 package dto
 
-import "github.com/hrshadhin/fiber-go-boilerplate/app/entity"
+import "github.com/hafidzhz/ihsansolusi-test/app/entity"
 
 type User struct {
-	ID             int     `json:"id"`
+	ID             int64   `json:"id"`
 	Name           string  `json:"name"`
 	IdentityNumber string  `json:"idenity_number"`
 	PhoneNumber    string  `json:"phone_number"`
@@ -12,18 +12,22 @@ type User struct {
 
 func ToUser(u *entity.User) *User {
 	return &User{
-		ID: u.ID,
+		ID:             u.ID,
+		Name:           u.Name,
+		IdentityNumber: u.IdentityNumber,
+		PhoneNumber:    u.PhoneNumber,
+		Balance:        u.Balance,
 	}
 }
 
 type CreateUserRequest struct {
 	Name           string `json:"name" validate:"required,lte=50,gte=5"`
-	IdentityNumber string `json:"identity_number" validate:"required,gte=16"`
-	PhoneNumber    string `json:"phone_number" validate:"required,lte=15,gte=8"`
+	IdentityNumber string `json:"identity_number" validate:"required,gte=16,numeric"`
+	PhoneNumber    string `json:"phone_number" validate:"required,lte=15,gte=8,numeric"`
 }
 
 type DepositRequest struct {
-	AccountNumber string  `json:"account_number" validate:"required,gte=17"`
+	AccountNumber string  `json:"account_number" validate:"required,gte=17,numeric"`
 	Amount        float64 `json:"amount" validate:"required,gte=1"`
 }
 

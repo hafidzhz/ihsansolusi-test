@@ -6,14 +6,15 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/hafidzhz/ihsansolusi-test/app/controller"
+	"github.com/hafidzhz/ihsansolusi-test/app/repository"
+	"github.com/hafidzhz/ihsansolusi-test/pkg/config"
+	"github.com/hafidzhz/ihsansolusi-test/pkg/middleware"
+	"github.com/hafidzhz/ihsansolusi-test/pkg/route"
+	"github.com/hafidzhz/ihsansolusi-test/platform/database"
+	"github.com/hafidzhz/ihsansolusi-test/platform/logger"
+
 	"github.com/gofiber/fiber/v2"
-	"github.com/hrshadhin/fiber-go-boilerplate/app/controller"
-	"github.com/hrshadhin/fiber-go-boilerplate/app/repository"
-	"github.com/hrshadhin/fiber-go-boilerplate/pkg/config"
-	"github.com/hrshadhin/fiber-go-boilerplate/pkg/middleware"
-	"github.com/hrshadhin/fiber-go-boilerplate/pkg/route"
-	"github.com/hrshadhin/fiber-go-boilerplate/platform/database"
-	"github.com/hrshadhin/fiber-go-boilerplate/platform/logger"
 )
 
 func Serve() {
